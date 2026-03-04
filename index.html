@@ -2142,6 +2142,17 @@
 
                             <!-- Roles Manager Content -->
                             <div id="rolesManagerContent" style="display: none;">
+                                <!-- New Batch Discipline Control -->
+                                <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h5 class="mb-0"><i class="fas fa-toggle-on"></i> Manual Batch Discipline Override</h5>
+                                        <p class="small mb-0 text-muted">Force enable Batch Discipline tab for a temporary period until turned off manually. This will not affect the original schedule.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="manualBatchDisciplineToggle" style="transform: scale(1.5);">
+                                    </div>
+                                </div>
+
                                 <ul class="nav nav-tabs mb-3" id="rolesTabs" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="tab-teachers" data-bs-toggle="tab" data-bs-target="#content-teachers" type="button" role="tab">Teachers</button>
@@ -3779,7 +3790,8 @@ try {
 
         let currentUserEmail = '';
         let currentUserRole = null;
-        let currentUserUid = null; // Store UID for Firebase operations
+        let currentUserUid = null;
+        let manualBatchDisciplineActive = false; // New variable for manual override // Store UID for Firebase operations
 
         let recentModifications = {};
         let students = (typeof initialStudents !== 'undefined') ? [...initialStudents] : [];
@@ -7208,6 +7220,15 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
                     console.error('Error loading faceRecognitionData:', error);
                 });
 
+                // Listen for manual batch discipline override
+                database.ref('systemSettings/manualBatchDiscipline').on('value', snapshot => {
+                    manualBatchDisciplineActive = snapshot.val() || false;
+                    const toggle = document.getElementById('manualBatchDisciplineToggle');
+                    if (toggle) toggle.checked = manualBatchDisciplineActive;
+                    checkDisciplineTabAccess();
+                    updateBatchDisciplineTimer();
+                });
+
             } catch (error) {
                 console.error("Error initializing app:", error);
                 document.getElementById('dbStatus').textContent = 'Disconnected';
@@ -9680,7 +9701,9 @@ filteredStudents.sort((a, b) => {
                 // Remove existing event listeners to prevent multiple bindings
                 batchDisciplineTabLink.removeEventListener('click', preventBatchDisciplineClick);
 
-                if (dayOfWeek === 6 && currentHour >= startTime && currentHour < endTime) { // Saturday, 7 AM to 10 PM
+                const isScheduledTime = dayOfWeek === 6 && currentHour >= startTime && currentHour < endTime;
+                
+                if (manualBatchDisciplineActive || isScheduledTime) { // Manual override OR Saturday, 7 AM to 10 PM
                     batchDisciplineTabLink.classList.remove('disabled');
                 } else {
                     batchDisciplineTabLink.classList.add('disabled');
@@ -9690,6 +9713,8 @@ filteredStudents.sort((a, b) => {
         }
 
         function preventBatchDisciplineClick(event) {
+            if (manualBatchDisciplineActive) return; // Don't prevent if manually active
+            
             event.preventDefault();
             const today = new Date();
             const dayOfWeek = today.getDay();
@@ -10132,7 +10157,9 @@ filteredStudents.sort((a, b) => {
 
             let message = '';
 
-            if (dayOfWeek === openDay && currentHour >= openHour && currentHour < closeHour) {
+            if (manualBatchDisciplineActive) {
+                message = `<span class="text-success">Batch Discipline is OPEN! (Manual Override Active)</span>`;
+            } else if (dayOfWeek === openDay && currentHour >= openHour && currentHour < closeHour) {
                 // It's Saturday and within the open window
                 const closeTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), closeHour, 0, 0);
                 const timeLeft = closeTime.getTime() - now.getTime();
@@ -12814,10 +12841,27 @@ function initRolesManager() {
     const unlockBtn = document.getElementById('unlockRolesManagerBtn');
     const lockBtn = document.getElementById('lockRolesManagerBtn');
     const errorMsg = document.getElementById('rolesManagerAuthError');
+    const manualToggle = document.getElementById('manualBatchDisciplineToggle');
 
     // Only show card for admins (initial check, also handled in checkUserRole)
     if (currentUserRole === 'admin') {
         card.style.display = 'block';
+    }
+
+    // Manual Toggle Listener
+    if (manualToggle) {
+        manualToggle.addEventListener('change', function() {
+            const isActive = this.checked;
+            database.ref('systemSettings/manualBatchDiscipline').set(isActive)
+                .then(() => {
+                    // Update successful (the listener will handle the UI update)
+                })
+                .catch(error => {
+                    console.error('Error updating manual batch discipline:', error);
+                    alert('Failed to update manual batch discipline setting.');
+                    this.checked = !isActive; // Revert toggle
+                });
+        });
     }
 
     // Unlock
