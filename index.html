@@ -1433,79 +1433,7 @@
             }
         }
 
-        /* Canteen GIF animation */
-        .canteen-loader {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            gap: 15px;
-        }
 
-        .canteen-loader .canteen-loading-gif {
-            max-width: 280px;
-            max-height: 280px;
-            width: auto;
-            height: auto;
-            animation: pulse 2s ease-in-out infinite;
-            margin-bottom: 30px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .canteen-loading-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-            text-align: center;
-        }
-
-        /* Canteen Loading Popup */
-        .canteen-loading-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        /* Canteen Loading Spinner */
-        .canteen-loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            background: transparent;
-        }
-
-        .canteen-loading-gif {
-            max-width: 250px;
-            max-height: 250px;
-            width: auto;
-            height: auto;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
         /* Mobile optimization */
         @media (max-width: 767.98px) {
@@ -1647,11 +1575,7 @@
                         <i class="fas fa-user"></i> Individual Data
                     </a>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" data-bs-toggle="tab" href="#canteen" id="canteen-tab" role="tab" title="Manage student canteen information">
-                        <i class="fas fa-utensils"></i> Canteen
-                    </a>
-                </li>
+
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="#notes" id="notes-tab" role="tab" title="Manage your personal notes">
                         <i class="fas fa-clipboard"></i> Notes
@@ -2046,16 +1970,10 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label d-flex justify-content-between align-items-center" for="adminSelector">
+                                    <label class="form-label" for="adminSelector">
                                         <span>Modified By (Incharge):</span>
-                                        <button type="button" class="btn btn-sm btn-outline-primary" id="addNewInchargeBtn" style="padding: 2px 8px; font-size: 0.8rem;">
-                                            <i class="fas fa-plus"></i> Add New
-                                        </button>
                                     </label>
-                                    <select class="form-select" id="adminSelector" title="Select the incharge who is making this point change." aria-label="Select incharge">
-                                        <option value="">Select Incharge</option>
-                                       <option value="Testing Admin">Testing admin</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="adminSelector" placeholder="Enter Incharge Name" title="Enter the name of the incharge who is making this point change." aria-label="Enter incharge name"/>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" for="teacherAdminName">Teacher's Name (if not an Incharge):</label>
@@ -2854,210 +2772,8 @@
                     </div>
                 </div>
 
-                <!-- Canteen Tab -->
-                <div class="tab-pane fade" id="canteen" role="tabpanel">
-                    <!-- Canteen Loading Popup -->
-                    <div class="canteen-loading-popup" id="canteenLoadingScreen" style="display: none;">
-                        <div class="loading-container">
-                            <img src="Official Memo.gif" alt="Loading Canteen..." class="loading-logo">
-                            <div class="loading-text">Loading Canteen Data...</div>
-                        </div>
-                    </div>
-                    
-                    <h3><i class="fas fa-utensils"></i> Canteen Management</h3>
 
-                    <!-- Canteen Rules Section -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-danger text-white">
-                            <i class="fas fa-gavel"></i> CANTEEN RULE
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><strong>1:</strong> Only 5 biscuit packets- limilT (no choco pie/Dark Fantasy )</li>
-                                <li class="list-group-item"><strong>2:</strong> Jacket / Sweater are not allowed and no Caps even</li>
-                                <li class="list-group-item"><strong>3:</strong> No one should come in civiL dress</li>
-                                <li class="list-group-item"><strong>4:</strong> Only Gurukul T-shirt , No other gurukul Jersey or any Other Gurukul Dress Code</li>
-                            </ul>
-                        </div>
-                    </div>
 
-                    <!-- Canteen Dates / Google Calendar Section -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-white text-dark border-bottom">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-calendar-alt text-primary"></i> <strong>Canteen Dates</strong> <small class="text-muted">(Google Calendar Integration)</small></span>
-                                <button class="btn btn-sm btn-primary" onclick="downloadCanteenICS()">
-                                    <i class="fas fa-download"></i> Download All to Calendar (.ics)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover mb-0" id="canteenDatesTable">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Day</th>
-                                            <th>Allocation / Group</th>
-                                            <th>Batch / Note</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="canteenDatesBody">
-                                        <!-- Dates will be populated by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-filter"></i> Filter Students
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Filter by Floor:</label>
-                                    <select class="form-select" id="canteenFloorFilter">
-                                        <option value="">All Floors</option>
-                                        <option value="1">1st Floor</option>
-                                        <option value="2">2nd Floor</option>
-                                        <option value="3">3rd Floor</option>
-                                        <option value="4">4th Floor</option>
-                                        <option value="5">5th Floor</option>
-                                        <option value="6">6th Floor</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Filter by Class:</label>
-                                    <input type="text" class="form-control" id="canteenClassFilter" placeholder="e.g., X, IX">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Filter by Rooms:</label>
-                                    <input type="text" class="form-control" id="canteenRoomFilter" placeholder="e.g., 101,102,103">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Exclude Grades:</label>
-                                    <div class="d-flex flex-wrap">
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input" type="checkbox" value="A+" id="excludeAPlus">
-                                            <label class="form-check-label" for="excludeAPlus">Exclude A+</label>
-                                        </div>
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input" type="checkbox" value="A" id="excludeARank">
-                                            <label class="form-check-label" for="excludeARank">Exclude A</label>
-                                        </div>
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input" type="checkbox" value="B" id="excludeBRank">
-                                            <label class="form-check-label" for="excludeBRank">Exclude B</label>
-                                        </div>
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input" type="checkbox" value="C" id="excludeCRank">
-                                            <label class="form-check-label" for="excludeCRank">Exclude C</label>
-                                        </div>
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input" type="checkbox" value="D" id="excludeDRank" checked>
-                                            <label class="form-check-label" for="excludeDRank">Exclude D</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" value="E" id="excludeERank" checked>
-                                            <label class="form-check-label" for="excludeERank">Exclude E</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-end mb-3">
-                                <div class="col-md-4">
-                                    <label for="canteenBatchAmount" class="form-label fw-bold">Set Amount for All</label>
-                                    <input type="number" class="form-control" id="canteenBatchAmount" placeholder="e.g., 300">
-                                </div>
-                                <div class="col-md-8">
-                                    <button class="btn btn-info" id="applyCanteenBatchAmount">
-                                        <i class="fas fa-check-double"></i> Apply to All Filtered
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <div class="btn-toolbar gap-2" role="toolbar" aria-label="Canteen actions">
-                                        <div class="btn-group" role="group" aria-label="Filter actions">
-                                            <button class="btn btn-primary" id="applyCanteenFilters">
-                                                <i class="fas fa-filter"></i> Apply Filters
-                                            </button>
-                                            <button class="btn btn-secondary" id="printCanteenList">
-                                                <i class="fas fa-print"></i> Print Filtered List
-                                            </button>
-                                        </div>
-                                        <div class="btn-group" role="group" aria-label="Export actions" id="canteenExportOptions">
-                                            <div class="input-group input-group-sm me-2" style="width: 200px;">
-                                                <span class="input-group-text">Export Date:</span>
-                                                <input type="date" class="form-control" id="canteenExportDate">
-                                            </div>
-                                            <button class="btn btn-success" id="exportToExcel">
-                                                <i class="fas fa-file-excel"></i> Export to Excel
-                                            </button>
-                                            <button class="btn btn-warning" id="exportToGoogleSheets">
-                                                <i class="fas fa-table"></i> Export to Google Sheets
-                                            </button>
-                                        </div>
-                                        <div class="btn-group" role="group" aria-label="Email actions" id="canteenEmailOptions">
-                                            <div class="input-group input-group-sm me-2" style="width: 260px;">
-                                                <label class="input-group-text" for="canteenRecipientSelect">Recipient</label>
-                                                <select class="form-select" id="canteenRecipientSelect" title="Select saved recipient email">
-                                                    <option value="">Select recipient</option>
-                                                </select>
-                                                <button class="btn btn-outline-primary" type="button" id="addCanteenRecipientBtn" title="Add recipient">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                            <button class="btn btn-info" id="sendCanteenEmailBtn" title="Send filtered list to selected recipient">
-                                                <i class="fas fa-paper-plane"></i> Send Filtered List
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-12">
-                                    <div id="canteenFilterDisplay" class="filter-display-container"></div>
-                                    <div id="canteenStatus" class="mt-2"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Consolidated Manual Manage Section -->
-                    <div class="card mb-4" id="manualCanteenManageCard">
-                        <div class="card-header bg-secondary text-white">
-                            <i class="fas fa-edit"></i> Manage Canteen List (Temporary)
-                        </div>
-                        <div class="card-body">
-                            <p class="text-muted small">Temporarily add or remove students from the view. Changes are saved locally but do not affect the main database.</p>
-                            
-                            <!-- Add Section -->
-                            <h6 class="text-primary"><i class="fas fa-plus"></i> Add Student</h6>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Student IDs</span>
-                                <input type="text" class="form-control" id="manualCanteenAddInput" placeholder="e.g. af5555, ae1234">
-                                <button class="btn btn-primary" type="button" id="addManualCanteenBtn">Add</button>
-                            </div>
-                            <div id="manualCanteenStatus" class="mb-3"></div>
-
-                            <!-- Remove Section (Admin Only) -->
-                            <div id="canteenRemoveSection" style="display: none;">
-                                <h6 class="text-danger"><i class="fas fa-minus"></i> Remove Student</h6>
-                                <div class="input-group">
-                                    <span class="input-group-text">Student IDs</span>
-                                    <input type="text" class="form-control" id="manualCanteenRemoveInput" placeholder="e.g. af5555, ae1234">
-                                    <button class="btn btn-warning" type="button" id="removeManualCanteenBtn">Remove</button>
-                                </div>
-                                <div id="manualCanteenRemoveStatus" class="mt-2"></div>
-                            </div>
-                        </div>
-                    </div>
 
 
 
@@ -3083,66 +2799,7 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="card mb-4" id="manageCanteenDatesCard" style="display: none;">
-                        <div class="card-header bg-warning text-dark">
-                            <i class="fas fa-calendar-alt"></i> Manage Canteen Dates (Admin Only)
-                        </div>
-                        <div class="card-body">
-                            <p class="text-muted small">Edit the fields directly in the table and click "Save All Changes" to update the schedule.</p>
-                            <div class="table-responsive">
-                                <table class="table table-sm table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Day</th>
-                                            <th>Allocation</th>
-                                            <th>Batch</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="manageCanteenDatesBody">
-                                        <!-- Will be populated by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="text-end mt-3">
-                                <button class="btn btn-success" onclick="saveCanteenDates()">
-                                    <i class="fas fa-save"></i> Save All Changes
-                                </button>
-                            </div>
-                            <div id="manageCanteenDatesStatus" class="mt-2"></div>
-                        </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-list"></i> Student List for Canteen
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered" id="canteenStudentTable">
-                                    <thead class="table-primary">
-                                        <tr>
-                                            <th>MID</th>
-                                            <th>Name</th>
-                                            <th>Class</th>
-                                            <th>Room No</th>
-                                            <th>Cup No</th>
-                                            <th>Amount</th>
-                                            <th>Sign</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="canteenStudentList">
-                                        <!-- Student data will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="canteenTotalsSummary" class="alert alert-info py-2 px-3 mt-2" role="status">Calculating...</div>
-                            <nav aria-label="Page navigation for canteen">
-                                <ul class="pagination justify-content-center" id="canteenPagination"></ul>
-                            </nav>
-                        </div>
-                    </div>
 
                     </div>
                 </div>
@@ -3965,6 +3622,63 @@ try {
             }
         }
 
+        // ===== INCHARGE FIREBASE SYNC FUNCTIONS (Administration Page Only) =====
+        let inchargeHistoryList = [];
+
+        // Load incharge history from Firebase
+        async function loadInchargeHistoryFromFirebase() {
+            try {
+                const snapshot = await database.ref('history').limitToLast(100).once('value');
+                const incharges = new Set();
+                
+                snapshot.forEach(childSnapshot => {
+                    const entry = childSnapshot.val();
+                    if (entry.modifiedBy) {
+                        incharges.add(entry.modifiedBy);
+                    }
+                });
+                
+                inchargeHistoryList = Array.from(incharges);
+                console.log('Loaded incharge history:', inchargeHistoryList);
+            } catch (error) {
+                console.error('Error loading incharge history from Firebase:', error);
+            }
+        }
+
+        // Save incharge name to Firebase for future reference
+        async function saveInchargeNameToFirebase(inchargeName) {
+            try {
+                if (!inchargeName || inchargeName.trim() === '') return;
+                
+                const timestamp = new Date().getTime();
+                await database.ref('inchargeNames/' + timestamp).set({
+                    name: inchargeName.trim(),
+                    timestamp: timestamp,
+                    email: currentUserEmail
+                });
+                
+                // Reload the history list
+                await loadInchargeHistoryFromFirebase();
+                console.log('Incharge name saved to Firebase:', inchargeName);
+            } catch (error) {
+                console.error('Error saving incharge name to Firebase:', error);
+            }
+        }
+
+        // Get autocomplete suggestions for incharge field (Administration page only)
+        function getInchargeSuggestions(inputValue) {
+            if (!inputValue || inputValue.trim() === '') {
+                return [];
+            }
+            
+            const lowerInput = inputValue.toLowerCase();
+            return inchargeHistoryList.filter(name => {
+                // Extract just the name part (before the email)
+                const namePart = name.split('(')[0].trim().toLowerCase();
+                return namePart.includes(lowerInput);
+            }).slice(0, 5); // Return top 5 suggestions
+        }
+
         // Modified checkAndApplyCooldown to apply cooldown only for positive points
         function checkAndApplyCooldown(modifierEmail, studentId, isPositive) {
             if (!isPositive) {
@@ -4156,55 +3870,6 @@ try {
 
         // ===== END FACE RECOGNITION FUNCTIONS =====
 
-        // ===== CANTEEN MANAGEMENT FUNCTIONS =====
-        function showCanteenStatus(type, message) {
-            const container = document.getElementById('canteenStatus');
-            if (!container) return;
-            let cls = 'alert-info';
-            if (type === 'success') cls = 'alert-success';
-            else if (type === 'error') cls = 'alert-danger';
-            else if (type === 'warning') cls = 'alert-warning';
-            container.innerHTML = `<div class="alert ${cls} mb-2" role="alert">${message}</div>`;
-        }
-        
-        // --- Canteen Dates / Google Calendar Integration ---
-        let canteenScheduleData = [
-            { date: '21-12-25', day: 'Sun', allocation: 'A+', batch: 'Seniors' },
-            { date: '22-12-25', day: 'Mon', allocation: '108-114', batch: '-' },
-            { date: '23-12-25', day: 'Tue', allocation: '-', batch: '-' },
-            { date: '24-12-25', day: 'Wed', allocation: '-', batch: '-' },
-            { date: '25-12-25', day: 'Thu', allocation: '201-207', batch: 'I' },
-            { date: '26-12-25', day: 'Fri', allocation: '304-314', batch: 'II' },
-            { date: '27-12-25', day: 'Sat', allocation: '-', batch: '-' },
-            { date: '28-12-25', day: 'Sun', allocation: '-', batch: '-' },
-            { date: '29-12-25', day: 'Mon', allocation: '501-507', batch: 'II' },
-            { date: '30-12-25', day: 'Tue', allocation: 'Ekadashi', batch: 'II' },
-            { date: '31-12-25', day: 'Wed', allocation: '508-607', batch: '-' },
-            { date: '01-01-26', day: 'Thu', allocation: '208-214', batch: 'II' },
-            { date: '02-01-26', day: 'Fri', allocation: '608-613', batch: 'II' },
-            { date: '03-01-26', day: 'Sat', allocation: '-', batch: '-' },
-            { date: '04-01-26', day: 'Sun', allocation: '-', batch: '-' },
-            { date: '05-01-26', day: 'Mon', allocation: '-', batch: 'II' },
-            { date: '06-01-26', day: 'Tue', allocation: '401-414', batch: 'II' },
-            { date: '07-01-26', day: 'WED', allocation: '-', batch: '-' },
-            { date: '08-01-26', day: 'THU', allocation: '408-414', batch: 'II' }
-        ];
-
-        function fetchCanteenDates() {
-            database.ref('canteenScheduleData').on('value', snapshot => {
-                if (snapshot.exists()) {
-                    canteenScheduleData = snapshot.val();
-                    renderCanteenDates();
-                    if (typeof renderCanteenManageTable === 'function') {
-                        renderCanteenManageTable();
-                    }
-                } else {
-                    // Initial setup: save default data to Firebase if it doesn't exist
-                    database.ref('canteenScheduleData').set(canteenScheduleData);
-                }
-            });
-        }
-
 
 
         function renderCanteenDates() {
@@ -4367,6 +4032,7 @@ try {
         
         // Separate canteen transaction state and helpers
         let canteenTransactions = {};
+        // REMOVED: Get canteen transactions
         function getCanteenTransactionsFor(ids = []) {
             const list = [];
             ids.forEach(id => {
@@ -4375,6 +4041,7 @@ try {
             });
             return list;
         }
+        // REMOVED: Canteen transaction recording
         async function recordCanteenTransaction(items) {
             try {
                 const payload = { timestamp: new Date().toISOString(), items };
@@ -4385,11 +4052,13 @@ try {
         }
         
         // Global variable to store filtered students
+        // Canteen functionality removed
         let filteredCanteenStudents = [];
         let canteenPageSize = 25;
         let canteenCurrentPage = 1;
         window.manualCanteenExclusions = [];
 
+        // REMOVED: Canteen filters function
         function applyCanteenFilters() {
             showLoading();
             validateCanteenData();
@@ -5233,32 +4902,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             }
         }
         
-        // Attach event listeners for canteen functionality
-        const applyFiltersBtn = document.getElementById('applyCanteenFilters');
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener('click', applyCanteenFilters);
-        }
-        const canteenRoomFilterInput = document.getElementById('canteenRoomFilter');
-        if (canteenRoomFilterInput) {
-            canteenRoomFilterInput.addEventListener('input', debounce(applyCanteenFilters, 300));
-        }
-        const canteenClassFilterInput = document.getElementById('canteenClassFilter');
-        if (canteenClassFilterInput) {
-            canteenClassFilterInput.addEventListener('input', debounce(applyCanteenFilters, 300));
-        }
-        ['excludeAPlus','excludeARank','excludeBRank','excludeCRank','excludeDRank','excludeERank','canteenFloorFilter'].forEach(id=>{
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('change', applyCanteenFilters);
-            }
-        });
-
-        const canteenTab = document.getElementById('canteen-tab');
-        if (canteenTab) {
-            canteenTab.addEventListener('shown.bs.tab', function() {
-                console.log('Canteen tab opened - showing loading animation');
-                
-                // Show canteen loading screen
+        // REMOVED: Canteen event listeners and Firebase integration
                 const loadingScreen = document.getElementById('canteenLoadingScreen');
                 if (loadingScreen) {
                     loadingScreen.style.display = 'flex';
@@ -5293,29 +4937,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             console.error('Canteen tab not found!');
         }
 
-        const applyCanteenBatchAmountBtn = document.getElementById('applyCanteenBatchAmount');
-        if (applyCanteenBatchAmountBtn) {
-            applyCanteenBatchAmountBtn.addEventListener('click', applyCanteenBatchAmount);
-        }
-
-
-        const importStudentDataBtn = document.getElementById('importStudentData');
-        if (importStudentDataBtn) {
-            importStudentDataBtn.addEventListener('click', importStudentDataFromFile);
-        }
-
-        const exportExcelBtn = document.getElementById('exportToExcel');
-        if (exportExcelBtn) {
-            exportExcelBtn.addEventListener('click', exportCanteenToExcel);
-        }
-        const printBtn = document.getElementById('printCanteenList');
-        if (printBtn) {
-            printBtn.addEventListener('click', printFilteredCanteenList);
-        }
-        const exportSheetsBtn = document.getElementById('exportToGoogleSheets');
-        if (exportSheetsBtn) {
-            exportSheetsBtn.addEventListener('click', exportCanteenToGoogleSheets);
-        }
+        // REMOVED: All canteen button listeners
         const canteenListEl = document.getElementById('canteenStudentList');
         if (canteenListEl) {
             canteenListEl.addEventListener('input', (e)=>{
@@ -5387,26 +5009,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailto;
         }
-        // Hook up buttons
-        populateCanteenRecipientSelect();
-        const addCanteenRecipientBtn = document.getElementById('addCanteenRecipientBtn');
-        if (addCanteenRecipientBtn) addCanteenRecipientBtn.addEventListener('click', addCanteenRecipientHandler);
-        const sendCanteenEmailBtn = document.getElementById('sendCanteenEmailBtn');
-        if (sendCanteenEmailBtn) sendCanteenEmailBtn.addEventListener('click', sendCanteenEmailHandler);
-
-        const deleteStudentByMidBtn = document.getElementById('deleteStudentByMidBtn');
-        if (deleteStudentByMidBtn) {
-            deleteStudentByMidBtn.addEventListener('click', ()=>{
-                const midEl = document.getElementById('manageStudentMid');
-                const mid = midEl ? midEl.value.trim() : '';
-                if (!mid) { showCanteenStatus('warning', 'Enter MID to delete.'); return; }
-                simpleDeleteStudent(mid);
-            });
-        }
-        const runDiagBtn = document.getElementById('runDiagnosticsBtn');
-        if (runDiagBtn) {
-            runDiagBtn.addEventListener('click', runFullDiagnostics);
-        }
+        // REMOVED: Canteen button listeners
 
         // Event delegation for revert buttons
         const changeHistoryList = document.getElementById('changeHistoryList');
@@ -5419,6 +5022,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             });
         }
 
+        // REMOVED: Canteen filter badges rendering
         function renderCanteenFilterBadges() {
             const container = document.getElementById('canteenFilterDisplay');
             if (!container) return;
@@ -6893,8 +6497,6 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
 
         // ===== END DATA IMPORT & HISTORY FUNCTIONS =====
 
-        // ===== END CANTEEN MANAGEMENT FUNCTIONS =====
-
         async function logCanteenError(event, details) {
             try {
                 const entry = { event, details, timestamp: new Date().toISOString() };
@@ -7352,7 +6954,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
     }
     
     const percentageInput = percentageInputEl.value;
-    const adminModifierDropdown = adminSelectorEl.value;
+    const adminModifierInput = adminSelectorEl.value.trim(); // Get value from input field
     const teacherAdminNameInput = teacherAdminNameEl.value.trim();
     const adminEmailInput = currentUserEmail; // This should be populated from the logged-in user
 
@@ -7371,12 +6973,12 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
     }
 
     let modifiedBy = '';
-    if (adminModifierDropdown) {
-        modifiedBy = adminModifierDropdown;
+    if (adminModifierInput) {
+        modifiedBy = adminModifierInput;
     } else if (teacherAdminNameInput) {
         modifiedBy = teacherAdminNameInput;
     } else {
-        displayUpdateMessage('updateMessage', 'Please select an Incharge or enter a Teacher\'s Name.', 'danger');
+        displayUpdateMessage('updateMessage', 'Please enter an Incharge name or enter a Teacher\'s Name.', 'danger');
         updatePointsButton.disabled = false;
         updatePointsButton.innerHTML = '<i class="fas fa-save"></i> Update Points';
         return;
@@ -12824,7 +12426,7 @@ function initRolesManager() {
 
     // Unlock
     unlockBtn.addEventListener('click', () => {
-        if (passwordInput.value === 'VIBGYOR') {
+        if (passwordInput.value === 'Pa@@word') {
             rolesManagerUnlocked = true;
             authDiv.style.display = 'none';
             contentDiv.style.display = 'block';
