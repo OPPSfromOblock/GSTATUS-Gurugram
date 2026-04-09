@@ -1433,7 +1433,79 @@
             }
         }
 
+        /* Canteen GIF animation */
+        .canteen-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            gap: 15px;
+        }
 
+        .canteen-loader .canteen-loading-gif {
+            max-width: 280px;
+            max-height: 280px;
+            width: auto;
+            height: auto;
+            animation: pulse 2s ease-in-out infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .canteen-loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+
+        /* Canteen Loading Popup */
+        .canteen-loading-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        /* Canteen Loading Spinner */
+        .canteen-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .canteen-loading-gif {
+            max-width: 250px;
+            max-height: 250px;
+            width: auto;
+            height: auto;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
 
         /* Mobile optimization */
         @media (max-width: 767.98px) {
@@ -1575,7 +1647,6 @@
                         <i class="fas fa-user"></i> Individual Data
                     </a>
                 </li>
-
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" data-bs-toggle="tab" href="#notes" id="notes-tab" role="tab" title="Manage your personal notes">
                         <i class="fas fa-clipboard"></i> Notes
@@ -1973,7 +2044,7 @@
                                     <label class="form-label" for="adminSelector">
                                         <span>Modified By (Incharge):</span>
                                     </label>
-                                    <input type="text" class="form-control" id="adminSelector" placeholder="Enter Incharge Name" title="Enter the name of the incharge who is making this point change." aria-label="Enter incharge name"/>
+                                    <input type="text" class="form-control" id="adminSelector" placeholder="Enter Incharge Name" title="Enter the incharge name who is making this point change." aria-label="Incharge name"/>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" for="teacherAdminName">Teacher's Name (if not an Incharge):</label>
@@ -2772,8 +2843,210 @@
                     </div>
                 </div>
 
+                <!-- Canteen Tab -->
+                <div class="tab-pane fade" id="canteen" role="tabpanel">
+                    <!-- Canteen Loading Popup -->
+                    <div class="canteen-loading-popup" id="canteenLoadingScreen" style="display: none;">
+                        <div class="loading-container">
+                            <img src="Official Memo.gif" alt="Loading Canteen..." class="loading-logo">
+                            <div class="loading-text">Loading Canteen Data...</div>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-utensils"></i> Canteen Management</h3>
 
+                    <!-- Canteen Rules Section -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-danger text-white">
+                            <i class="fas fa-gavel"></i> CANTEEN RULE
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>1:</strong> Only 5 biscuit packets- limilT (no choco pie/Dark Fantasy )</li>
+                                <li class="list-group-item"><strong>2:</strong> Jacket / Sweater are not allowed and no Caps even</li>
+                                <li class="list-group-item"><strong>3:</strong> No one should come in civiL dress</li>
+                                <li class="list-group-item"><strong>4:</strong> Only Gurukul T-shirt , No other gurukul Jersey or any Other Gurukul Dress Code</li>
+                            </ul>
+                        </div>
+                    </div>
 
+                    <!-- Canteen Dates / Google Calendar Section -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-white text-dark border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-calendar-alt text-primary"></i> <strong>Canteen Dates</strong> <small class="text-muted">(Google Calendar Integration)</small></span>
+                                <button class="btn btn-sm btn-primary" onclick="downloadCanteenICS()">
+                                    <i class="fas fa-download"></i> Download All to Calendar (.ics)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0" id="canteenDatesTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Day</th>
+                                            <th>Allocation / Group</th>
+                                            <th>Batch / Note</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="canteenDatesBody">
+                                        <!-- Dates will be populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-filter"></i> Filter Students
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter by Floor:</label>
+                                    <select class="form-select" id="canteenFloorFilter">
+                                        <option value="">All Floors</option>
+                                        <option value="1">1st Floor</option>
+                                        <option value="2">2nd Floor</option>
+                                        <option value="3">3rd Floor</option>
+                                        <option value="4">4th Floor</option>
+                                        <option value="5">5th Floor</option>
+                                        <option value="6">6th Floor</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter by Class:</label>
+                                    <input type="text" class="form-control" id="canteenClassFilter" placeholder="e.g., X, IX">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter by Rooms:</label>
+                                    <input type="text" class="form-control" id="canteenRoomFilter" placeholder="e.g., 101,102,103">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Exclude Grades:</label>
+                                    <div class="d-flex flex-wrap">
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input" type="checkbox" value="A+" id="excludeAPlus">
+                                            <label class="form-check-label" for="excludeAPlus">Exclude A+</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input" type="checkbox" value="A" id="excludeARank">
+                                            <label class="form-check-label" for="excludeARank">Exclude A</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input" type="checkbox" value="B" id="excludeBRank">
+                                            <label class="form-check-label" for="excludeBRank">Exclude B</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input" type="checkbox" value="C" id="excludeCRank">
+                                            <label class="form-check-label" for="excludeCRank">Exclude C</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input" type="checkbox" value="D" id="excludeDRank" checked>
+                                            <label class="form-check-label" for="excludeDRank">Exclude D</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" value="E" id="excludeERank" checked>
+                                            <label class="form-check-label" for="excludeERank">Exclude E</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-end mb-3">
+                                <div class="col-md-4">
+                                    <label for="canteenBatchAmount" class="form-label fw-bold">Set Amount for All</label>
+                                    <input type="number" class="form-control" id="canteenBatchAmount" placeholder="e.g., 300">
+                                </div>
+                                <div class="col-md-8">
+                                    <button class="btn btn-info" id="applyCanteenBatchAmount">
+                                        <i class="fas fa-check-double"></i> Apply to All Filtered
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="btn-toolbar gap-2" role="toolbar" aria-label="Canteen actions">
+                                        <div class="btn-group" role="group" aria-label="Filter actions">
+                                            <button class="btn btn-primary" id="applyCanteenFilters">
+                                                <i class="fas fa-filter"></i> Apply Filters
+                                            </button>
+                                            <button class="btn btn-secondary" id="printCanteenList">
+                                                <i class="fas fa-print"></i> Print Filtered List
+                                            </button>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Export actions" id="canteenExportOptions">
+                                            <div class="input-group input-group-sm me-2" style="width: 200px;">
+                                                <span class="input-group-text">Export Date:</span>
+                                                <input type="date" class="form-control" id="canteenExportDate">
+                                            </div>
+                                            <button class="btn btn-success" id="exportToExcel">
+                                                <i class="fas fa-file-excel"></i> Export to Excel
+                                            </button>
+                                            <button class="btn btn-warning" id="exportToGoogleSheets">
+                                                <i class="fas fa-table"></i> Export to Google Sheets
+                                            </button>
+                                        </div>
+                                        <div class="btn-group" role="group" aria-label="Email actions" id="canteenEmailOptions">
+                                            <div class="input-group input-group-sm me-2" style="width: 260px;">
+                                                <label class="input-group-text" for="canteenRecipientSelect">Recipient</label>
+                                                <select class="form-select" id="canteenRecipientSelect" title="Select saved recipient email">
+                                                    <option value="">Select recipient</option>
+                                                </select>
+                                                <button class="btn btn-outline-primary" type="button" id="addCanteenRecipientBtn" title="Add recipient">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <button class="btn btn-info" id="sendCanteenEmailBtn" title="Send filtered list to selected recipient">
+                                                <i class="fas fa-paper-plane"></i> Send Filtered List
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div id="canteenFilterDisplay" class="filter-display-container"></div>
+                                    <div id="canteenStatus" class="mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consolidated Manual Manage Section -->
+                    <div class="card mb-4" id="manualCanteenManageCard">
+                        <div class="card-header bg-secondary text-white">
+                            <i class="fas fa-edit"></i> Manage Canteen List (Temporary)
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">Temporarily add or remove students from the view. Changes are saved locally but do not affect the main database.</p>
+                            
+                            <!-- Add Section -->
+                            <h6 class="text-primary"><i class="fas fa-plus"></i> Add Student</h6>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Student IDs</span>
+                                <input type="text" class="form-control" id="manualCanteenAddInput" placeholder="e.g. af5555, ae1234">
+                                <button class="btn btn-primary" type="button" id="addManualCanteenBtn">Add</button>
+                            </div>
+                            <div id="manualCanteenStatus" class="mb-3"></div>
+
+                            <!-- Remove Section (Admin Only) -->
+                            <div id="canteenRemoveSection" style="display: none;">
+                                <h6 class="text-danger"><i class="fas fa-minus"></i> Remove Student</h6>
+                                <div class="input-group">
+                                    <span class="input-group-text">Student IDs</span>
+                                    <input type="text" class="form-control" id="manualCanteenRemoveInput" placeholder="e.g. af5555, ae1234">
+                                    <button class="btn btn-warning" type="button" id="removeManualCanteenBtn">Remove</button>
+                                </div>
+                                <div id="manualCanteenRemoveStatus" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
@@ -2799,7 +3072,66 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="card mb-4" id="manageCanteenDatesCard" style="display: none;">
+                        <div class="card-header bg-warning text-dark">
+                            <i class="fas fa-calendar-alt"></i> Manage Canteen Dates (Admin Only)
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">Edit the fields directly in the table and click "Save All Changes" to update the schedule.</p>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Day</th>
+                                            <th>Allocation</th>
+                                            <th>Batch</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="manageCanteenDatesBody">
+                                        <!-- Will be populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button class="btn btn-success" onclick="saveCanteenDates()">
+                                    <i class="fas fa-save"></i> Save All Changes
+                                </button>
+                            </div>
+                            <div id="manageCanteenDatesStatus" class="mt-2"></div>
+                        </div>
+                    </div>
 
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-list"></i> Student List for Canteen
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered" id="canteenStudentTable">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>MID</th>
+                                            <th>Name</th>
+                                            <th>Class</th>
+                                            <th>Room No</th>
+                                            <th>Cup No</th>
+                                            <th>Amount</th>
+                                            <th>Sign</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="canteenStudentList">
+                                        <!-- Student data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="canteenTotalsSummary" class="alert alert-info py-2 px-3 mt-2" role="status">Calculating...</div>
+                            <nav aria-label="Page navigation for canteen">
+                                <ul class="pagination justify-content-center" id="canteenPagination"></ul>
+                            </nav>
+                        </div>
+                    </div>
 
                     </div>
                 </div>
@@ -3622,63 +3954,6 @@ try {
             }
         }
 
-        // ===== INCHARGE FIREBASE SYNC FUNCTIONS (Administration Page Only) =====
-        let inchargeHistoryList = [];
-
-        // Load incharge history from Firebase
-        async function loadInchargeHistoryFromFirebase() {
-            try {
-                const snapshot = await database.ref('history').limitToLast(100).once('value');
-                const incharges = new Set();
-                
-                snapshot.forEach(childSnapshot => {
-                    const entry = childSnapshot.val();
-                    if (entry.modifiedBy) {
-                        incharges.add(entry.modifiedBy);
-                    }
-                });
-                
-                inchargeHistoryList = Array.from(incharges);
-                console.log('Loaded incharge history:', inchargeHistoryList);
-            } catch (error) {
-                console.error('Error loading incharge history from Firebase:', error);
-            }
-        }
-
-        // Save incharge name to Firebase for future reference
-        async function saveInchargeNameToFirebase(inchargeName) {
-            try {
-                if (!inchargeName || inchargeName.trim() === '') return;
-                
-                const timestamp = new Date().getTime();
-                await database.ref('inchargeNames/' + timestamp).set({
-                    name: inchargeName.trim(),
-                    timestamp: timestamp,
-                    email: currentUserEmail
-                });
-                
-                // Reload the history list
-                await loadInchargeHistoryFromFirebase();
-                console.log('Incharge name saved to Firebase:', inchargeName);
-            } catch (error) {
-                console.error('Error saving incharge name to Firebase:', error);
-            }
-        }
-
-        // Get autocomplete suggestions for incharge field (Administration page only)
-        function getInchargeSuggestions(inputValue) {
-            if (!inputValue || inputValue.trim() === '') {
-                return [];
-            }
-            
-            const lowerInput = inputValue.toLowerCase();
-            return inchargeHistoryList.filter(name => {
-                // Extract just the name part (before the email)
-                const namePart = name.split('(')[0].trim().toLowerCase();
-                return namePart.includes(lowerInput);
-            }).slice(0, 5); // Return top 5 suggestions
-        }
-
         // Modified checkAndApplyCooldown to apply cooldown only for positive points
         function checkAndApplyCooldown(modifierEmail, studentId, isPositive) {
             if (!isPositive) {
@@ -3870,6 +4145,55 @@ try {
 
         // ===== END FACE RECOGNITION FUNCTIONS =====
 
+        // ===== CANTEEN MANAGEMENT FUNCTIONS =====
+        function showCanteenStatus(type, message) {
+            const container = document.getElementById('canteenStatus');
+            if (!container) return;
+            let cls = 'alert-info';
+            if (type === 'success') cls = 'alert-success';
+            else if (type === 'error') cls = 'alert-danger';
+            else if (type === 'warning') cls = 'alert-warning';
+            container.innerHTML = `<div class="alert ${cls} mb-2" role="alert">${message}</div>`;
+        }
+        
+        // --- Canteen Dates / Google Calendar Integration ---
+        let canteenScheduleData = [
+            { date: '21-12-25', day: 'Sun', allocation: 'A+', batch: 'Seniors' },
+            { date: '22-12-25', day: 'Mon', allocation: '108-114', batch: '-' },
+            { date: '23-12-25', day: 'Tue', allocation: '-', batch: '-' },
+            { date: '24-12-25', day: 'Wed', allocation: '-', batch: '-' },
+            { date: '25-12-25', day: 'Thu', allocation: '201-207', batch: 'I' },
+            { date: '26-12-25', day: 'Fri', allocation: '304-314', batch: 'II' },
+            { date: '27-12-25', day: 'Sat', allocation: '-', batch: '-' },
+            { date: '28-12-25', day: 'Sun', allocation: '-', batch: '-' },
+            { date: '29-12-25', day: 'Mon', allocation: '501-507', batch: 'II' },
+            { date: '30-12-25', day: 'Tue', allocation: 'Ekadashi', batch: 'II' },
+            { date: '31-12-25', day: 'Wed', allocation: '508-607', batch: '-' },
+            { date: '01-01-26', day: 'Thu', allocation: '208-214', batch: 'II' },
+            { date: '02-01-26', day: 'Fri', allocation: '608-613', batch: 'II' },
+            { date: '03-01-26', day: 'Sat', allocation: '-', batch: '-' },
+            { date: '04-01-26', day: 'Sun', allocation: '-', batch: '-' },
+            { date: '05-01-26', day: 'Mon', allocation: '-', batch: 'II' },
+            { date: '06-01-26', day: 'Tue', allocation: '401-414', batch: 'II' },
+            { date: '07-01-26', day: 'WED', allocation: '-', batch: '-' },
+            { date: '08-01-26', day: 'THU', allocation: '408-414', batch: 'II' }
+        ];
+
+        function fetchCanteenDates() {
+            database.ref('canteenScheduleData').on('value', snapshot => {
+                if (snapshot.exists()) {
+                    canteenScheduleData = snapshot.val();
+                    renderCanteenDates();
+                    if (typeof renderCanteenManageTable === 'function') {
+                        renderCanteenManageTable();
+                    }
+                } else {
+                    // Initial setup: save default data to Firebase if it doesn't exist
+                    database.ref('canteenScheduleData').set(canteenScheduleData);
+                }
+            });
+        }
+
 
 
         function renderCanteenDates() {
@@ -4032,7 +4356,6 @@ try {
         
         // Separate canteen transaction state and helpers
         let canteenTransactions = {};
-        // REMOVED: Get canteen transactions
         function getCanteenTransactionsFor(ids = []) {
             const list = [];
             ids.forEach(id => {
@@ -4041,7 +4364,6 @@ try {
             });
             return list;
         }
-        // REMOVED: Canteen transaction recording
         async function recordCanteenTransaction(items) {
             try {
                 const payload = { timestamp: new Date().toISOString(), items };
@@ -4052,13 +4374,11 @@ try {
         }
         
         // Global variable to store filtered students
-        // Canteen functionality removed
         let filteredCanteenStudents = [];
         let canteenPageSize = 25;
         let canteenCurrentPage = 1;
         window.manualCanteenExclusions = [];
 
-        // REMOVED: Canteen filters function
         function applyCanteenFilters() {
             showLoading();
             validateCanteenData();
@@ -4551,7 +4871,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             // Test 3: Check UI elements
             console.log('\n3. UI ELEMENTS TEST');
             const elements = [
-                'rankings-tab', 'studentManagement-tab',
+                'canteen-tab', 'rankings-tab', 'studentManagement-tab',
                 'canteenRoomInput', 'canteenFloorFilter', 'canteenClassFilter',
                 'rankingsTable', 'gradeFilter', 'floorFilter',
                 'studentManagementTable'
@@ -4799,6 +5119,96 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             return 'D'; // 96 and above
         }
         
+        // Display filtered students in the table
+        function displayCanteenStudents() {
+            const tbody = document.getElementById('canteenStudentList');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+            let studentsToDisplay = filteredCanteenStudents.slice();
+            if (window.canteenSortKey) {
+                const key = window.canteenSortKey;
+                const dir = window.canteenSortDir === 'desc' ? -1 : 1;
+                studentsToDisplay.sort((a,b)=>{
+                    // Special handling for room sorting
+                    if (key === 'roomNo' || key === 'room') {
+                        const getRoomAndCup = (student) => {
+                            const roomData = String(student.roomNo || student.room || student['Room No'] || 'N/A');
+                            // Use the same parsing logic as student management
+                            const match = roomData.match(/^(\d+)(?:\/(\d+))?/);
+                            if (match) {
+                                return {
+                                    roomNum: parseInt(match[1]) || 0,
+                                    cupNum: parseInt(match[2]) || 0
+                                };
+                            }
+                            return { roomNum: 0, cupNum: 0 };
+                        };
+                        
+                        const aRoomCup = getRoomAndCup(a);
+                        const bRoomCup = getRoomAndCup(b);
+                        
+                        // First sort by room number, then by cup number
+                        if (aRoomCup.roomNum !== bRoomCup.roomNum) {
+                            return (aRoomCup.roomNum - bRoomCup.roomNum) * dir;
+                        }
+                        return (aRoomCup.cupNum - bRoomCup.cupNum) * dir;
+                    }
+                    
+                    // Default sorting for other fields
+                    const av = String(a[key] || '').toLowerCase();
+                    const bv = String(b[key] || '').toLowerCase();
+                    if (!isNaN(Number(a[key])) && !isNaN(Number(b[key]))) {
+                        return (Number(a[key]) - Number(b[key])) * dir;
+                    }
+                    if (av < bv) return -1 * dir;
+                    if (av > bv) return 1 * dir;
+                    return 0;
+                });
+            }
+
+            if (studentsToDisplay.length === 0) {
+                studentsToDisplay = [
+                    { id: 'TEST01', name: 'Test Student A', class: 'X', room: '101', cup: 'A1', rank: 'A' },
+                    { id: 'TEST02', name: 'Test Student B', class: 'XI', room: '202', cup: 'B2', rank: 'B' },
+                    { id: 'TEST03', name: 'Test Student C', class: 'XII', room: '303', cup: 'C3', rank: 'C' }
+                ];
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="7" class="text-center alert alert-warning">No real data found. Displaying sample data for testing.</td>';
+                tbody.appendChild(tr);
+            }
+
+            const useAll = window.canteenViewMode === 'all';
+            const startIdx = useAll ? 0 : (canteenCurrentPage - 1) * canteenPageSize;
+            const endIdx = useAll ? studentsToDisplay.length : startIdx + canteenPageSize;
+            studentsToDisplay.slice(startIdx, endIdx).forEach(student => {
+                const tr = document.createElement('tr');
+                const roomData = String(student.roomNo || student.room || 'N/A');
+                let room = 'N/A';
+                let cup = 'N/A';
+                if (roomData.includes('/')) {
+                    [room, cup] = roomData.split('/');
+                } else {
+                    room = roomData;
+                }
+                tr.innerHTML = `
+                    <td>${student.id || student.firebaseKey || 'N/A'}</td>
+                    <td>${student.name || 'N/A'}</td>
+                    <td>${student.class || 'N/A'}</td>
+                    <td>${room}</td>
+                    <td>${cup}</td>
+                    <td><input type="number" min="0" class="form-control canteen-amount-input" data-studentid="${student.id || student.firebaseKey || ''}" value="${student.canteenBalance || ''}" placeholder="Amount"></td>
+                    <td></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            const paginationEl = document.getElementById('canteenPagination');
+            if (paginationEl) {
+                paginationEl.style.display = useAll ? 'none' : '';
+            }
+            computeCanteenTotals();
+        }
+        
         // Get badge class for rank
         function getRankBadgeClass(rank) {
             switch(rank) {
@@ -4812,7 +5222,180 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             }
         }
         
-        // REMOVED: Canteen event listeners and functions
+        // Attach event listeners for canteen functionality
+        const applyFiltersBtn = document.getElementById('applyCanteenFilters');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', applyCanteenFilters);
+        }
+        const canteenRoomFilterInput = document.getElementById('canteenRoomFilter');
+        if (canteenRoomFilterInput) {
+            canteenRoomFilterInput.addEventListener('input', debounce(applyCanteenFilters, 300));
+        }
+        const canteenClassFilterInput = document.getElementById('canteenClassFilter');
+        if (canteenClassFilterInput) {
+            canteenClassFilterInput.addEventListener('input', debounce(applyCanteenFilters, 300));
+        }
+        ['excludeAPlus','excludeARank','excludeBRank','excludeCRank','excludeDRank','excludeERank','canteenFloorFilter'].forEach(id=>{
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', applyCanteenFilters);
+            }
+        });
+
+        const canteenTab = document.getElementById('canteen-tab');
+        if (canteenTab) {
+            canteenTab.addEventListener('shown.bs.tab', function() {
+                console.log('Canteen tab opened - showing loading animation');
+                
+                // Show canteen loading screen
+                const loadingScreen = document.getElementById('canteenLoadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'flex';
+                    console.log('Canteen loading screen shown');
+                } else {
+                    console.error('Canteen loading screen not found!');
+                }
+                
+                // Apply filters after a delay
+                setTimeout(() => {
+                    console.log('Applying canteen filters...');
+                    
+                    try {
+                        if (filteredCanteenStudents.length === 0) {
+                            applyCanteenFilters();
+                        }
+                        console.log('Canteen filters applied');
+                    } catch (error) {
+                        console.error('Error applying canteen filters:', error);
+                    }
+                    
+                    // Hide loading screen
+                    setTimeout(() => {
+                        console.log('Hiding canteen loading screen');
+                        if (loadingScreen) {
+                            loadingScreen.style.display = 'none';
+                        }
+                    }, 2000); // Show for 2 seconds
+                }, 500);
+            });
+        } else {
+            console.error('Canteen tab not found!');
+        }
+
+        const applyCanteenBatchAmountBtn = document.getElementById('applyCanteenBatchAmount');
+        if (applyCanteenBatchAmountBtn) {
+            applyCanteenBatchAmountBtn.addEventListener('click', applyCanteenBatchAmount);
+        }
+
+
+        const importStudentDataBtn = document.getElementById('importStudentData');
+        if (importStudentDataBtn) {
+            importStudentDataBtn.addEventListener('click', importStudentDataFromFile);
+        }
+
+        const exportExcelBtn = document.getElementById('exportToExcel');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', exportCanteenToExcel);
+        }
+        const printBtn = document.getElementById('printCanteenList');
+        if (printBtn) {
+            printBtn.addEventListener('click', printFilteredCanteenList);
+        }
+        const exportSheetsBtn = document.getElementById('exportToGoogleSheets');
+        if (exportSheetsBtn) {
+            exportSheetsBtn.addEventListener('click', exportCanteenToGoogleSheets);
+        }
+        const canteenListEl = document.getElementById('canteenStudentList');
+        if (canteenListEl) {
+            canteenListEl.addEventListener('input', (e)=>{
+                if (e.target && e.target.classList.contains('canteen-amount-input')) {
+                    computeCanteenTotals();
+                }
+            });
+        }
+
+        // Canteen recipient storage and send-email integration (mailto fallback)
+        const CANTEEN_RECIPIENTS_KEY = 'canteenRecipients';
+        function loadCanteenRecipients() {
+            try { return JSON.parse(localStorage.getItem(CANTEEN_RECIPIENTS_KEY) || '[]'); }
+            catch (e) { return []; }
+        }
+        function saveCanteenRecipients(list) { localStorage.setItem(CANTEEN_RECIPIENTS_KEY, JSON.stringify(list || [])); }
+        function populateCanteenRecipientSelect() {
+            const sel = document.getElementById('canteenRecipientSelect');
+            if (!sel) return;
+            const list = loadCanteenRecipients();
+            sel.innerHTML = '<option value="">Select recipient</option>';
+            list.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.email;
+                opt.textContent = r.label ? `${r.label} <${r.email}>` : r.email;
+                sel.appendChild(opt);
+            });
+        }
+        function addCanteenRecipientHandler() {
+            const label = prompt('Enter recipient name/label (optional):');
+            const email = prompt('Enter recipient email (will be saved):');
+            if (!email) return alert('Email is required to add a recipient.');
+            const re = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+            if (!re.test(email.trim())) return alert('Please enter a valid email address.');
+            const list = loadCanteenRecipients();
+            if (list.find(r => r.email.toLowerCase() === email.trim().toLowerCase())) { alert('Recipient already exists.'); populateCanteenRecipientSelect(); return; }
+            list.push({ label: (label||'').trim(), email: email.trim() });
+            saveCanteenRecipients(list);
+            populateCanteenRecipientSelect();
+            alert('Recipient saved.');
+        }
+        function prepareCanteenEmailBody(subset) {
+            const lines = [];
+            lines.push('MID\tName\tClass\tRoom\tCup\tAmount');
+            const amountsMap = new Map();
+            document.querySelectorAll('.canteen-amount-input').forEach(input => {
+                const key = String(input.dataset.studentid || '').trim();
+                const val = String(input.value || '').trim();
+                if (key) amountsMap.set(key, val);
+            });
+            subset.forEach(s => {
+                const id = s.id || s.firebaseKey || '';
+                const roomData = String(s.roomNo || s.room || '');
+                let room = roomData, cup = '';
+                if (roomData.includes('/')) [room, cup] = roomData.split('/');
+                const amount = amountsMap.get(String(id)) || '';
+                lines.push([id, s.name || '', s.class || '', room || '', cup || '', amount].join('\t'));
+            });
+            return lines.join('\n');
+        }
+        function sendCanteenEmailHandler() {
+            const sel = document.getElementById('canteenRecipientSelect');
+            const to = sel ? sel.value : '';
+            if (!to) return alert('Please select a recipient from the dropdown or add one first.');
+            const subset = getVisibleFilteredStudents();
+            if (!subset || subset.length === 0) return alert('No filtered students to send.');
+            const body = prepareCanteenEmailBody(subset);
+            const subject = `Canteen Filtered List - ${new Date().toLocaleDateString()}`;
+            const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailto;
+        }
+        // Hook up buttons
+        populateCanteenRecipientSelect();
+        const addCanteenRecipientBtn = document.getElementById('addCanteenRecipientBtn');
+        if (addCanteenRecipientBtn) addCanteenRecipientBtn.addEventListener('click', addCanteenRecipientHandler);
+        const sendCanteenEmailBtn = document.getElementById('sendCanteenEmailBtn');
+        if (sendCanteenEmailBtn) sendCanteenEmailBtn.addEventListener('click', sendCanteenEmailHandler);
+
+        const deleteStudentByMidBtn = document.getElementById('deleteStudentByMidBtn');
+        if (deleteStudentByMidBtn) {
+            deleteStudentByMidBtn.addEventListener('click', ()=>{
+                const midEl = document.getElementById('manageStudentMid');
+                const mid = midEl ? midEl.value.trim() : '';
+                if (!mid) { showCanteenStatus('warning', 'Enter MID to delete.'); return; }
+                simpleDeleteStudent(mid);
+            });
+        }
+        const runDiagBtn = document.getElementById('runDiagnosticsBtn');
+        if (runDiagBtn) {
+            runDiagBtn.addEventListener('click', runFullDiagnostics);
+        }
 
         // Event delegation for revert buttons
         const changeHistoryList = document.getElementById('changeHistoryList');
@@ -4825,7 +5408,707 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
             });
         }
 
-        // ===== DATA IMPORT & HISTORY FUNCTIONS =====
+        function renderCanteenFilterBadges() {
+            const container = document.getElementById('canteenFilterDisplay');
+            if (!container) return;
+            if (!window.canteenControlsInjected) {
+                const wrap = document.createElement('div');
+                wrap.className = 'd-flex flex-wrap gap-2 mb-2';
+                const viewToggle = document.createElement('div');
+                viewToggle.innerHTML = `
+                    <div class="btn-group btn-group-sm" role="group" aria-label="View Mode">
+                        <button type="button" id="canteenViewAllBtn" class="btn btn-outline-primary">All</button>
+                        <button type="button" id="canteenViewPagesBtn" class="btn btn-outline-primary">Pages</button>
+                    </div>
+                `;
+                const simpleToggle = document.createElement('div');
+                simpleToggle.innerHTML = `
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Layout">
+                        <button type="button" id="canteenSimpleOnBtn" class="btn btn-outline-secondary">Simple</button>
+                        <button type="button" id="canteenSimpleOffBtn" class="btn btn-outline-secondary">Detailed</button>
+                    </div>
+                `;
+                const sortSel = document.createElement('div');
+                sortSel.innerHTML = `
+                    <select id="canteenSortSelect" class="form-select form-select-sm" style="width:auto;display:inline-block;">
+                        <option value="roomNo">Sort by Room</option>
+                        <option value="name">Sort by Name</option>
+                        <option value="id">Sort by ID</option>
+                        <option value="class">Sort by Class</option>
+                    </select>
+                    <select id="canteenSortDirSelect" class="form-select form-select-sm" style="width:auto;display:inline-block;">
+                        <option value="asc">Asc</option>
+                        <option value="desc">Desc</option>
+                    </select>
+                `;
+                wrap.appendChild(viewToggle);
+                wrap.appendChild(simpleToggle);
+                wrap.appendChild(sortSel);
+                container.appendChild(wrap);
+                window.canteenControlsInjected = true;
+                window.canteenViewMode = window.canteenViewMode || 'all';
+                window.canteenSimpleView = window.canteenSimpleView !== false;
+                window.canteenSortKey = window.canteenSortKey || 'roomNo';
+                window.canteenSortDir = window.canteenSortDir || 'asc';
+                const allBtn = document.getElementById('canteenViewAllBtn');
+                const pagesBtn = document.getElementById('canteenViewPagesBtn');
+                const simpleOnBtn = document.getElementById('canteenSimpleOnBtn');
+                const simpleOffBtn = document.getElementById('canteenSimpleOffBtn');
+                const sortKeySel = document.getElementById('canteenSortSelect');
+                const sortDirSel = document.getElementById('canteenSortDirSelect');
+                if (allBtn) allBtn.addEventListener('click', ()=>{ window.canteenViewMode='all'; displayCanteenStudents(); });
+                if (pagesBtn) pagesBtn.addEventListener('click', ()=>{ window.canteenViewMode='pages'; displayCanteenStudents(); renderCanteenPagination(); });
+                if (simpleOnBtn) simpleOnBtn.addEventListener('click', ()=>{ window.canteenSimpleView=true; displayCanteenStudents(); });
+                if (simpleOffBtn) simpleOffBtn.addEventListener('click', ()=>{ window.canteenSimpleView=false; displayCanteenStudents(); });
+                if (sortKeySel) {
+                    sortKeySel.addEventListener('change', (e)=>{ window.canteenSortKey=e.target.value; displayCanteenStudents(); });
+                    // Set default selection to room sorting
+                    sortKeySel.value = 'roomNo';
+                }
+                if (sortDirSel) {
+                    sortDirSel.addEventListener('change', (e)=>{ window.canteenSortDir=e.target.value; displayCanteenStudents(); });
+                    // Set default selection to ascending
+                    sortDirSel.value = 'asc';
+                }
+            }
+            const floorFilter = document.getElementById('canteenFloorFilter').value;
+            const classFilter = document.getElementById('canteenClassFilter').value.trim();
+            const roomsInput = document.getElementById('canteenRoomFilter').value.trim();
+            const badges = [];
+            if (floorFilter) badges.push(`<span class="filter-display-badge"><i class="fas fa-building"></i> Floor: ${floorFilter}</span>`);
+            if (classFilter) badges.push(`<span class="filter-display-badge"><i class="fas fa-chalkboard"></i> Class: ${classFilter}</span>`);
+            if (roomsInput) badges.push(`<span class="filter-display-badge"><i class="fas fa-door-open"></i> Rooms: ${roomsInput}</span>`);
+            ['excludeAPlus','excludeARank','excludeBRank','excludeCRank','excludeDRank','excludeERank'].forEach(id=>{
+                const el = document.getElementById(id);
+                if (el && el.checked) {
+                    const label = id==='excludeAPlus'?'A+':id==='excludeARank'?'A':id==='excludeBRank'?'B':id==='excludeCRank'?'C':id==='excludeDRank'?'D':'E';
+                    badges.push(`<span class="filter-display-badge"><i class="fas fa-award"></i> Exclude ${label}</span>`);
+                }
+            });
+            container.innerHTML = badges.join('');
+        }
+
+        function getActiveCanteenFilters() {
+            const floorFilter = document.getElementById('canteenFloorFilter').value || '';
+            const classFilter = document.getElementById('canteenClassFilter').value.trim() || '';
+            const roomsInput = document.getElementById('canteenRoomFilter').value.trim() || '';
+            const excludes = [];
+            ['excludeAPlus','excludeARank','excludeBRank','excludeCRank','excludeDRank','excludeERank'].forEach(id=>{
+                const el = document.getElementById(id);
+                if (el && el.checked) {
+                    const label = id==='excludeAPlus'?'A+':id==='excludeARank'?'A':id==='excludeBRank'?'B':id==='excludeCRank'?'C':id==='excludeDRank'?'D':'E';
+                    excludes.push(label);
+                }
+            });
+            return { floor: floorFilter, class: classFilter, rooms: roomsInput, excludes };
+        }
+
+        function getVisibleFilteredStudents() {
+            const list = filteredCanteenStudents.slice();
+            if (window.canteenViewMode === 'pages') {
+                const startIdx = (canteenCurrentPage - 1) * canteenPageSize;
+                return list.slice(startIdx, startIdx + canteenPageSize);
+            }
+            return list;
+        }
+
+        function computeCanteenTotals() {
+            const summaryEl = document.getElementById('canteenTotalsSummary');
+            if (!summaryEl) return;
+            summaryEl.textContent = 'Calculating...';
+            const amountsMap = new Map();
+            document.querySelectorAll('.canteen-amount-input').forEach(input => {
+                const key = String(input.dataset.studentid || '').trim();
+                const val = String(input.value || '').trim();
+                if (key) amountsMap.set(key, val);
+            });
+            const subset = getVisibleFilteredStudents();
+            const ids = subset.map(s=>String(s.id || s.firebaseKey || ''));
+            let count = 0, valid = 0, missing = 0, invalid = 0, sum = 0;
+            ids.forEach(id => {
+                if (!id) return;
+                count++;
+                const val = amountsMap.get(id) || '';
+                if (val === '') { missing++; return; }
+                const num = Number(val);
+                if (!isFinite(num) || num < 0) { invalid++; return; }
+                valid++;
+                sum += num;
+            });
+            if (count === 0) {
+                summaryEl.className = 'alert alert-warning py-2 px-3 mt-2';
+                summaryEl.textContent = 'No filtered students';
+                return;
+            }
+            summaryEl.className = 'alert alert-info py-2 px-3 mt-2';
+            summaryEl.innerHTML = `<span><i class="fas fa-calculator"></i> Filtered: ${count}</span> <span class="ms-2">Valid: ${valid}</span> <span class="ms-2">Missing: ${missing}</span> <span class="ms-2">Invalid: ${invalid}</span> <span class="ms-2 fw-bold">Total: ${sum}</span>`;
+        }
+
+        async function simpleDeleteStudent(id) {
+            if (!id) return;
+            const confirmation = confirm('Delete this student? This action cannot be undone here. Use History to revert.');
+            if (!confirmation) return;
+            showLoading();
+            try {
+                const snap = await database.ref(`/students/${id}`).once('value');
+                const s = snap.val() || {};
+                const updates = {};
+                updates[`/students/${id}`] = null;
+                if (s.roomCup) updates[`/roomCupIndex/${s.roomCup}`] = null;
+                await database.ref().update(updates);
+                showCanteenStatus('success', `Deleted ${id}.`);
+                applyCanteenFilters();
+            } catch (e) {
+                console.error('Delete error:', e);
+                showCanteenStatus('error', 'Deletion failed.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        
+        function validateCanteenData() {
+            const issues = [];
+            students.forEach(s=>{
+                if (!s.id && !s.firebaseKey) issues.push('missing_id');
+                const roomStr = String(s.roomNo || s.room || '');
+                if (roomStr.length === 0) issues.push('missing_room');
+                if (!s.name) issues.push('missing_name');
+            });
+            if (issues.length > 0) {
+                logCanteenError('validation_issues', JSON.stringify({ count: issues.length }));
+            }
+        }
+
+        function renderCanteenPagination() {
+            const pagination = document.getElementById('canteenPagination');
+            if (!pagination) return;
+            const total = filteredCanteenStudents.length;
+            const pages = Math.max(1, Math.ceil(total / canteenPageSize));
+            const items = [];
+            for (let p = 1; p <= pages; p++) {
+                items.push(`
+                    <li class="page-item ${p===canteenCurrentPage?'active':''}">
+                        <a class="page-link" href="#" data-page="${p}">${p}</a>
+                    </li>
+                `);
+            }
+            pagination.innerHTML = items.join('');
+            pagination.querySelectorAll('a.page-link').forEach(a=>{
+                a.addEventListener('click', (e)=>{
+                    e.preventDefault();
+                    const p = parseInt(a.dataset.page,10);
+                    if (!isNaN(p)) {
+                        canteenCurrentPage = p;
+                        displayCanteenStudents();
+                        renderCanteenPagination();
+                        const tableEl = document.getElementById('canteenStudentTable');
+                        if (tableEl && tableEl.scrollIntoView) {
+                            tableEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+        }
+
+        // Export to Excel
+        function exportCanteenToExcel() {
+            const headers = ["MID", "Name", "Class", "Room No", "Cup No", "Amount", "Sign"];
+            const data = [headers];
+            const amountsMap = new Map();
+            const inputs = document.querySelectorAll('.canteen-amount-input');
+            inputs.forEach(input => {
+                const key = String(input.dataset.studentid || '').trim();
+                const val = String(input.value || '').trim();
+                if (key) amountsMap.set(key, val);
+            });
+            let missing = 0;
+            filteredCanteenStudents.forEach(s => {
+                const key = String(s.id || s.firebaseKey || '');
+                const val = amountsMap.get(key) || '';
+                if (!val) missing++;
+            });
+            if (filteredCanteenStudents.length > 0 && missing === filteredCanteenStudents.length) {
+                showCanteenStatus('error', 'No amounts found for filtered students. Please enter amounts before export.');
+                return;
+            }
+            if (missing > 0) {
+                const proceed = confirm(`Amounts missing for ${missing} students. Proceed with blanks?`);
+                if (!proceed) return;
+            }
+            const allStudents = filteredCanteenStudents.slice();
+            allStudents.forEach(student => {
+                const roomData = student.roomNo || student.room || '';
+                let room = '';
+                let cup = '';
+                if (roomData.includes('/')) {
+                    [room, cup] = roomData.split('/');
+                } else {
+                    room = roomData;
+                }
+                const key = String(student.id || student.firebaseKey || '');
+                const amountValue = amountsMap.get(key) || '';
+                data.push([
+                    student.id || '',
+                    student.name || '',
+                    student.class || '',
+                    student.roomNo || room,
+                    student.cupNo || cup,
+                    amountValue,
+                    ''
+                ]);
+            });
+
+            let ws = XLSX.utils.aoa_to_sheet(data);
+            const roomsInputEl = document.getElementById('canteenRoomFilter');
+            const desiredSheetName = roomsInputEl ? (roomsInputEl.value.trim() || 'Canteen List') : 'Canteen List';
+            ws['!cols'] = [
+                { wch: 13 },  // A: MID
+                { wch: 28 },  // B: Name
+                { wch: 8 },   // C: Class
+                { wch: 10 },  // D: Room No
+                { wch: 8 },   // E: Cup No
+                { wch: 10 },  // F: Amount
+                { wch: 10 }   // G: Sign
+            ];
+            ws['!rows'] = Array(data.length).fill({ hpt: 15 });
+            ws['!autofilter'] = { ref: `A1:G${data.length}` };
+            try {
+                const headersRange = ['A1','B1','C1','D1','E1','F1','G1'];
+                headersRange.forEach(addr => {
+                    if (ws[addr]) {
+                        ws[addr].s = { alignment: { horizontal: 'center', vertical: 'center', wrapText: true } };
+                    }
+                });
+                for (let r = 2; r <= data.length; r++) {
+                    ['A','C','D','E','F','G'].forEach(col=>{
+                        const addr = `${col}${r}`;
+                        if (ws[addr]) {
+                            ws[addr].s = { alignment: { horizontal: 'center', vertical: 'center' } };
+                        }
+                    });
+                    const nameAddr = `B${r}`;
+                    if (ws[nameAddr]) {
+                        ws[nameAddr].s = { alignment: { horizontal: 'left', vertical: 'center', wrapText: true } };
+                    }
+                }
+            } catch (_) {}
+            applyExcelSizingOptions(ws);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, desiredSheetName);
+            
+            // Use custom date if provided, otherwise default to tomorrow's date
+            const customDate = document.getElementById('canteenExportDate').value;
+            let dateStr = '';
+            
+            if (customDate) {
+                dateStr = customDate;
+            } else {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                dateStr = tomorrow.toISOString().split('T')[0];
+            }
+            
+            XLSX.writeFile(wb, `canteen_list_${dateStr}.xlsx`);
+            try {
+                const txItems = filteredCanteenStudents.map(s => {
+                    const key = s.id || s.firebaseKey || '';
+                    let amount = '';
+                    if (amountsMap.has(String(key))) amount = amountsMap.get(String(key)) || '';
+                    return { id: key, amount };
+                });
+                recordCanteenTransaction(txItems);
+            } catch (_) {}
+        }
+        
+        function printFilteredCanteenList() {
+            const title = 'Canteen Student List';
+            // Use custom date if provided, otherwise default to tomorrow's date
+            const customDate = document.getElementById('canteenExportDate').value;
+            let date = '';
+            
+            if (customDate) {
+                // customDate is YYYY-MM-DD
+                const parts = customDate.split('-');
+                if(parts.length === 3) {
+                    // Format as DD/MM/YYYY or use locale
+                    date = `${parts[2]}/${parts[1]}/${parts[0]}`; 
+                } else {
+                    date = customDate;
+                }
+            } else {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                date = tomorrow.toLocaleDateString();
+            }
+            
+            const amountsMap = new Map();
+            document.querySelectorAll('.canteen-amount-input').forEach(input => {
+                const key = String(input.dataset.studentid || '').trim();
+                const val = String(input.value || '').trim();
+                if (key) amountsMap.set(key, val);
+            });
+            let missing = 0;
+            filteredCanteenStudents.forEach(s => {
+                const key = String(s.id || s.firebaseKey || '');
+                const val = amountsMap.get(key) || '';
+                if (!val) missing++;
+            });
+            if (filteredCanteenStudents.length > 0 && missing === filteredCanteenStudents.length) {
+                showCanteenStatus('error', 'No amounts found for filtered students. Please enter amounts before export.');
+                return;
+            }
+            if (missing > 0) {
+                const proceed = confirm(`Amounts missing for ${missing} students. Proceed with blanks?`);
+                if (!proceed) return;
+            }
+            const studentsToExport = filteredCanteenStudents.map(s => {
+                const key = String(s.id || s.firebaseKey || '');
+                const amount = amountsMap.get(key) || '';
+                return { ...s, amount };
+            });
+ 
+            const printWindow = window.open('', '_blank');
+            try { if (printWindow && printWindow.opener) { printWindow.opener = null; } } catch (_){}
+
+            let htmlContent = `
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 16px; }
+                        h2 { margin: 0 0 8px 0; }
+                        .meta { margin: 0 0 16px 0; color: #555; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        #videoContainer, .image-viewer { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+                        #video, .image-viewer img { max-width: 100%; height: auto; object-fit: contain; }
+                        td:nth-child(1), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6), td:nth-child(7) { text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <h2>${title}</h2>
+                    <p class="meta">Date: ${date}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>MID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Room No</th>
+                                <th>Cup No</th>
+                                <th>Amount</th>
+                                <th>Sign</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            studentsToExport.forEach(student => {
+                const roomData = student.roomNo || student.room || '';
+                let room = '';
+                let cup = '';
+                if (roomData.includes('/')) {
+                    [room, cup] = roomData.split('/');
+                } else {
+                    room = roomData;
+                }
+
+                htmlContent += `
+                    <tr>
+                        <td>${student.id || ''}</td>
+                        <td>${student.name || ''}</td>
+                        <td>${student.class || ''}</td>
+                        <td>${student.roomNo || room}</td>
+                        <td>${student.cupNo || cup}</td>
+                        <td>${student.amount || ''}</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Enhanced Google Sheets export with better error handling and performance monitoring
+        async function exportCanteenToGoogleSheets() {
+            const startTime = performance.now();
+            showLoading();
+            try {
+                const btn = document.getElementById('exportToGoogleSheets');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Exporting...';
+                }
+                
+                // Check authentication first
+                const token = sessionStorage.getItem('googleAccessToken');
+                const currentUser = auth.currentUser;
+                console.log('Auth check - Token:', token ? 'Found' : 'Missing', 'User:', currentUser ? currentUser.email : 'None');
+                
+                if (!token || !currentUser) {
+                    showCanteenStatus('error', 'Please sign in with Google first, then try exporting.');
+                    hideLoading();
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; }
+                    return;
+                }
+                
+                // Test token validity
+                try {
+                    const testResponse = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + token);
+                    if (!testResponse.ok) {
+                        console.log('Token invalid, forcing re-auth...');
+                        await forceGoogleReauth();
+                        const newToken = sessionStorage.getItem('googleAccessToken');
+                        if (!newToken) {
+                            throw new Error('Re-authentication failed');
+                        }
+                    }
+                } catch (testError) {
+                    console.log('Token test failed:', testError);
+                    showCanteenStatus('error', 'Authentication expired. Please sign in with Google again.');
+                    hideLoading();
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; }
+                    return;
+                }
+                
+                // Capture amounts BEFORE applying filters (since filters might clear inputs)
+                console.log('Capturing amounts BEFORE filters...');
+                const amountsMap = new Map();
+                document.querySelectorAll('.canteen-amount-input').forEach(input => {
+                    const key = String(input.dataset.studentid || '').trim();
+                    const val = String(input.value || '').trim();
+                    console.log(`Before filters - Key: "${key}", Value: "${val}"`);
+                    if (key && val) amountsMap.set(key, val);
+                });
+                
+                // Apply current filters to ensure we have the latest filtered data
+                console.log('Applying filters...');
+                applyCanteenFilters();
+                
+                // Wait a moment for filters to be applied
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                console.log('Current filtered students count:', filteredCanteenStudents.length);
+                if (filteredCanteenStudents.length === 0) {
+                    showCanteenStatus('error', 'No students match current filters. Please adjust filters and try again.');
+                    hideLoading();
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; }
+                    return;
+                }
+                
+                // Prepare data efficiently
+                const dataPrepStart = performance.now();
+                const headers = ["MID", "Name", "Class", "Room No", "Cup No", "Amount", "Sign"];
+                const rows = [headers];
+                
+                // Check if amounts were lost during filtering
+                if (amountsMap.size === 0) {
+                    console.log('Amounts lost during filtering, trying to recapture...');
+                    document.querySelectorAll('.canteen-amount-input').forEach(input => {
+                        const key = String(input.dataset.studentid || '').trim();
+                        const val = String(input.value || '').trim();
+                        console.log(`After filters - Key: "${key}", Value: "${val}"`);
+                        if (key && val) amountsMap.set(key, val);
+                    });
+                }
+                
+                console.log('Final amounts map:', Array.from(amountsMap.entries()));
+                
+                // If still empty, show alert
+                if (amountsMap.size === 0) {
+                    alert('Please enter amounts in the input fields before exporting. Currently no amounts are detected.');
+                    hideLoading();
+                    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; }
+                    return;
+                }
+                
+                // Debug: Log the amounts map
+                console.log('Final amounts map:', Array.from(amountsMap.entries()));
+                console.log('Filtered students:', filteredCanteenStudents.map(s => ({
+                    id: s.id || s.firebaseKey,
+                    name: s.name,
+                    key: String(s.id || s.firebaseKey || ''),
+                    amount: amountsMap.get(String(s.id || s.firebaseKey || ''))
+                })));
+                
+                filteredCanteenStudents.forEach(student => {
+                    const roomData = student.roomNo || student.room || '';
+                    let room = '';
+                    let cup = '';
+                    if (roomData.includes('/')) {
+                        const parts = roomData.split('/');
+                        room = parts[0];
+                        cup = parts[1];
+                    } else {
+                        room = roomData;
+                    }
+                    const key = String(student.id || student.firebaseKey || '');
+                    const amountValue = amountsMap.get(key) || '';
+                    console.log(`Student: ${student.name}, Key: "${key}", Amount: "${amountValue}"`);
+                    rows.push([
+                        student.id || '',
+                        student.name || '',
+                        student.class || '',
+                        room,
+                        cup,
+                        amountValue,
+                        ''
+                    ]);
+                });
+                
+                const dataPrepTime = performance.now() - dataPrepStart;
+                console.log(`Data preparation: ${dataPrepTime.toFixed(2)}ms for ${rows.length} rows`);
+                // Always create a new spreadsheet for each export
+                console.log('Creating new spreadsheet via Sheets API...');
+                const sheetsStart = performance.now();
+                const googleToken = await getGoogleOAuthToken();
+                if (!googleToken) {
+                    throw new Error('Google OAuth token not available');
+                }
+                
+                // Create spreadsheet using Sheets API (always create new)
+                const createRes = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + googleToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        properties: {
+                            title: `GSTATUS Canteen Export ${new Date().toISOString().split('T')[0]} ${new Date().toLocaleTimeString()}`
+                        },
+                        sheets: [{
+                            properties: {
+                                title: 'Canteen List'
+                            }
+                        }]
+                    })
+                });
+                
+                const sheetsTime = performance.now() - sheetsStart;
+                console.log(`Sheets API creation: ${sheetsTime.toFixed(2)}ms`);
+                
+                if (!createRes.ok) {
+                    const errText = await createRes.text();
+                    console.log('Sheets API error:', errText);
+                    showCanteenStatus('error', `Sheets API failed (${createRes.status}): ${errText.substring(0, 100)}`);
+                    hideLoading();
+                    return;
+                }
+                
+                const created = await createRes.json();
+                console.log('Spreadsheet created via Sheets API:', created.spreadsheetId);
+                const spreadsheetId = created.spreadsheetId;
+                // Don't store the ID - always create new sheets
+                showCanteenStatus('success', `New spreadsheet created! ID: ${spreadsheetId}`);
+                
+                // Batch write data using Sheets API
+                console.log('Writing data to spreadsheet...');
+                const writeStart = performance.now();
+                // Reuse the same token instead of redeclaring
+                if (!googleToken) {
+                    throw new Error('Google OAuth token not available');
+                }
+                
+                const range = 'Canteen List!A1';
+                const updateRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + googleToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        range: range,
+                        majorDimension: 'ROWS',
+                        values: rows
+                    })
+                });
+                
+                const writeTime = performance.now() - writeStart;
+                console.log(`Sheets API write: ${writeTime.toFixed(2)}ms`);
+                
+                if (!updateRes.ok) {
+                    const errText = await updateRes.text();
+                    console.log('Sheets API error:', errText);
+                    showCanteenStatus('error', `Sheets API failed (${updateRes.status}): ${errText.substring(0, 100)}`);
+                    hideLoading();
+                    return;
+                }
+                
+                const updateResult = await updateRes.json();
+                console.log('Data written successfully:', updateResult.updatedRows, 'rows updated');
+                
+                // Generate spreadsheet URL directly
+                const sheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`;
+                const totalTime = performance.now() - startTime;
+                console.log(`Total export time: ${totalTime.toFixed(2)}ms`);
+                showCanteenStatus('success', `Successfully exported ${filteredCanteenStudents.length} students in ${(totalTime/1000).toFixed(1)}s! <a href="${sheetUrl}" target="_blank">View Sheet</a>`);
+                try {
+                    const txItems = filteredCanteenStudents.map(s => {
+                        const key = s.id || s.firebaseKey || '';
+                        let amount = '';
+                        const inputEl = key ? document.querySelector(`.canteen-amount-input[data-studentid="${key}"]`) : null;
+                        if (inputEl && inputEl.value.trim() !== '') amount = inputEl.value.trim();
+                        return { id: key, amount };
+                    });
+                    await recordCanteenTransaction(txItems);
+                } catch (_) {}
+                showCanteenStatus('success', `Exported ${rows.length - 1} rows to Google Sheets.`);
+                if (btn) { btn.innerHTML = `<i class="fas fa-check"></i> Exported ${rows.length - 1}`; setTimeout(()=>{ btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; btn.disabled = false; }, 1500); }
+            } catch (e) {
+                await logCanteenError('sheets_export_error', String(e));
+                showCanteenStatus('error', 'Unexpected export error.');
+            } finally {
+                hideLoading();
+                const btn = document.getElementById('exportToGoogleSheets');
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-table"></i> Export to Google Sheets'; }
+            }
+        }
+
+        function applyCanteenBatchAmount() {
+            const batchAmountInput = document.getElementById('canteenBatchAmount');
+            const amount = batchAmountInput.value.trim();
+            performBatchAmountAdd(amount);
+        }
+
+        function performBatchAmountAdd(amount) {
+            if (!amount || isNaN(amount) || Number(amount) < 0) {
+                showCanteenStatus('error', 'Please enter a valid positive amount.');
+                return;
+            }
+
+            // Set the amount for all canteen amount input fields
+            const amountInputs = document.querySelectorAll('.canteen-amount-input');
+            let updatedCount = 0;
+            
+            amountInputs.forEach(input => {
+                input.value = amount;
+                updatedCount++;
+            });
+
+            showCanteenStatus('success', `Applied amount ${amount} to ${updatedCount} student(s).`);
+            
+            // Clear the batch amount input
+            const batchAmountInput = document.getElementById('canteenBatchAmount');
+            if (batchAmountInput) {
+                batchAmountInput.value = '';
+            }
+
+            // Update totals
+            computeCanteenTotals();
+        }
+        
 
         // ===== DATA IMPORT & HISTORY FUNCTIONS =====
 
@@ -5599,6 +6882,8 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
 
         // ===== END DATA IMPORT & HISTORY FUNCTIONS =====
 
+        // ===== END CANTEEN MANAGEMENT FUNCTIONS =====
+
         async function logCanteenError(event, details) {
             try {
                 const entry = { event, details, timestamp: new Date().toISOString() };
@@ -6056,7 +7341,7 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
     }
     
     const percentageInput = percentageInputEl.value;
-    const adminModifierInput = adminSelectorEl.value.trim(); // Get value from input field
+    const adminModifierDropdown = adminSelectorEl.value;
     const teacherAdminNameInput = teacherAdminNameEl.value.trim();
     const adminEmailInput = currentUserEmail; // This should be populated from the logged-in user
 
@@ -6075,12 +7360,12 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
     }
 
     let modifiedBy = '';
-    if (adminModifierInput) {
-        modifiedBy = adminModifierInput;
+    if (adminModifierDropdown) {
+        modifiedBy = adminModifierDropdown;
     } else if (teacherAdminNameInput) {
         modifiedBy = teacherAdminNameInput;
     } else {
-        displayUpdateMessage('updateMessage', 'Please enter an Incharge name or enter a Teacher\'s Name.', 'danger');
+        displayUpdateMessage('updateMessage', 'Please select an Incharge or enter a Teacher\'s Name.', 'danger');
         updatePointsButton.disabled = false;
         updatePointsButton.innerHTML = '<i class="fas fa-save"></i> Update Points';
         return;
@@ -6376,8 +7661,23 @@ Your Firebase setup is ready for GitHub Pages deployment!`);
 
             document.getElementById('addStudentForm').addEventListener('submit', addStudent);
 
-            // REMOVED: Canteen Tab Listeners
+            // Canteen Tab Listeners
+            const canteenTab = document.getElementById('canteen-tab');
+            if (canteenTab) {
+                const applyBtn = document.getElementById('applyCanteenFilters');
+                if (applyBtn) applyBtn.addEventListener('click', applyCanteenFilters);
+                const exportExcelEl = document.getElementById('exportToExcel');
+                if (exportExcelEl) exportExcelEl.addEventListener('click', exportCanteenToExcel);
+                const exportPdfBtn = document.getElementById('exportToPDF');
+                if (exportPdfBtn && typeof exportCanteenToPDF === 'function') {
+                    exportPdfBtn.addEventListener('click', exportCanteenToPDF);
+                }
 
+                // If canteen tab is active on load, fetch data
+                if (canteenTab.classList.contains('active')) {
+                    applyCanteenFilters();
+                }
+            }
             document.getElementById('studentManagementTable').addEventListener('click', async function(event) {
                 if (event.target.classList.contains('delete-student-btn')) {
                     const studentId = event.target.dataset.id;
@@ -8433,7 +9733,7 @@ filteredStudents.sort((a, b) => {
             const tabsToControl = [
                 "rankings-tab", "responses-tab", "student-management-tab",
                 "administration-tab", "batch-discipline-tab",
-                "individual-data-tab", "predictive-analytics-tab", "notes-tab", "adjudicators-tab", "face-recognition-tab", "support-tab"
+                "individual-data-tab", "canteen-tab", "predictive-analytics-tab", "notes-tab", "adjudicators-tab", "face-recognition-tab", "support-tab"
             ];
 
             const positivePointsSectionContainer = document.getElementById('positivePointsSectionContainer');
@@ -8524,7 +9824,7 @@ filteredStudents.sort((a, b) => {
             } else if (role === "incharge") {
                 const allowedTabs = [
                     "home-tab", "administration-tab", "batch-discipline-tab",
-                    "student-management-tab", "notes-tab", "predictive-analytics-tab", "support-tab"
+                    "student-management-tab", "notes-tab", "canteen-tab", "predictive-analytics-tab", "support-tab"
                 ];
                 allowedTabs.forEach(tabId => {
                     const tabElement = document.getElementById(tabId);
@@ -8582,7 +9882,7 @@ filteredStudents.sort((a, b) => {
                 });
                 
                 // Hide restricted tabs
-                const restrictedTabs = ["rankings-tab", "responses-tab", "student-management-tab", "administration-tab", "batch-discipline-tab", "individual-data-tab", "predictive-analytics-tab", "notes-tab", "adjudicators-tab", "face-recognition-tab"];
+                const restrictedTabs = ["rankings-tab", "responses-tab", "student-management-tab", "administration-tab", "batch-discipline-tab", "individual-data-tab", "canteen-tab", "predictive-analytics-tab", "notes-tab", "adjudicators-tab", "face-recognition-tab"];
                 restrictedTabs.forEach(tabId => {
                     const tabElement = document.getElementById(tabId);
                     if (tabElement) tabElement.style.display = "none";
@@ -11513,7 +12813,7 @@ function initRolesManager() {
 
     // Unlock
     unlockBtn.addEventListener('click', () => {
-        if (passwordInput.value === 'Pa@@word') {
+        if (passwordInput.value === 'VIBGYOR') {
             rolesManagerUnlocked = true;
             authDiv.style.display = 'none';
             contentDiv.style.display = 'block';
